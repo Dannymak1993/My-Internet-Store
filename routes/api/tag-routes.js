@@ -6,19 +6,18 @@ const { Tag, Product, ProductTag } = require('../../models');
 router.get('/', async (req, res) => {
   try {
     const tags = await Tag.findAll(); // Retrieve all tags from the database
-    res.json(tags); // Send the tags as JSON
+    res.status(200).json(tags); // Send the tags as JSON
   } catch (err) {
-    console.error(err);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
 
 router.get('/:id', async (req, res) => {
-  const id = req.params.id; // Retrieve the ID from the request parameter
+  // Retrieve the ID from the request parameter
   try {
-    const tag = await Tag.findByPk(id); // Retrieve the tag with the specified ID from the database
+    const tag = await Tag.findByPk(req.params.id); // Retrieve the tag with the specified ID from the database
     if (!tag) { // If tag is not found, send a 404 response
-      res.status(404).json({ message: `Tag with ID ${id} not found` });
+      res.status(404).json({ message: `Tag with ID not found` });
     } else {
       res.json(tag); // Send the tag as JSON
     }

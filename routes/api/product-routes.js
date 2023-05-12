@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const { receiveMessageOnPort } = require('worker_threads');
 const { Product, Category, Tag, ProductTag } = require('../../models');
 
 // The `/api/products` endpoint
@@ -7,19 +8,18 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 router.get('/', async (req, res) => {
   try {
     const products = await Product.findAll(); // Retrieve all products from the database
-    res.json(products); // Send the products as JSON
+    res.status(200).json(products); // Send the products as JSON
   } catch (err) {
-    console.error(err);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
 
 // get one product
 router.get('/:id', async (req, res) => {
-  const { id } = req.query; // Retrieve the "id" query parameter from the request URL
+  // Retrieve the "id" query parameter from the request URL
   try {
-    if (id) {
-      const product = await Product.findByPk(id); // Retrieve a single product by ID
+    if (req.params.id) {
+      const product = await Product.findByPk(req.params.id); // Retrieve a single product by ID
       if (!product) {
         return res.status(404).json({ message: 'Product not found' });
       }
